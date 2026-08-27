@@ -213,12 +213,6 @@ streamlit run dashboard/app.py
 
 ---
 
-## Interview walkthrough
-
-> I built MessageShield as an end-to-end Trust & Safety data science platform for an RCS-style messaging ecosystem. I combined NLP, sender behavior, and communication-graph signals for abuse detection; layered an explainable AI abuse taxonomy on top; ranked coordinated campaign risk; and translated model scores into proportional product actions from allow through block. I also evaluated a warning intervention with A/B testing and counterfactual IPW analysis and built dashboards for global ecosystem health, model performance, abuse intelligence, campaign detection, policy decisioning, and monitoring—all under a strict false-positive guardrail.
-
----
-
 ## Production evolution
 
 A real deployment could replace the deterministic AI taxonomy with **multilingual embeddings or a frontier/open-weight classifier**, add shared URL/domain/business identity graph entities, streaming features, regional calibration, human-review feedback, appeal outcomes, policy versioning, challenger models, and privacy-preserving aggregation.
