@@ -18,6 +18,16 @@
 
 ---
 
+## 📊 Dashboard preview
+
+<p align="center">
+  <img src="assets/dashboard-preview.svg" alt="MessageShield Trust and Safety Command Center dashboard preview" width="100%" />
+</p>
+
+> **Command Center:** executive ecosystem health, model effectiveness, false-positive guardrails, intervention impact, and a high-risk investigation queue in one surface. The repository also includes dedicated views for model performance, abuse networks, experimentation, counterfactual analysis, and ecosystem monitoring.
+
+---
+
 ## Product concept
 
 MessageShield is a portfolio-grade Trust & Safety data science system for protecting an **RCS/RBM-style messaging ecosystem** from spam, phishing, and unwanted traffic while minimizing harm to legitimate users.
@@ -92,79 +102,35 @@ The operating threshold is chosen to **maximize spam recall while keeping false-
 
 `dashboard/app.py`
 
-Executive view for product, policy, and security stakeholders:
-
-- spam prevalence
-- precision / recall
-- false-positive rate
-- PR-AUC
-- risk-score distributions
-- warning-UI impact
-- high-risk investigation queue
-- latest monitoring snapshot
+Executive view for product, policy, and security stakeholders: spam prevalence, precision/recall, false-positive rate, PR-AUC, risk-score distributions, warning-UI impact, investigation queue, and monitoring snapshot.
 
 ### 2. 📈 Model Performance
 
 `dashboard/pages/1_Model_Performance.py`
 
-Model-development and operating-point view:
-
-- ROC curve
-- Precision-Recall curve
-- ROC-AUC / PR-AUC
-- calibrated operating threshold
-- threshold sensitivity
-- precision / recall / FPR trade-offs
-- explicit 2% FPR production guardrail
+ROC/PR curves, calibrated operating threshold, threshold sensitivity, precision/recall/FPR trade-offs, and the explicit 2% production FPR guardrail.
 
 ### 3. 🕸️ Abuse Network & Sender Behavior
 
 `dashboard/pages/2_Abuse_Network.py`
 
-Campaign and adversarial-behavior analysis:
-
-- recipient fan-out
-- sender activity volume
-- prior abuse reports
-- repeated-text behavior
-- URL volume
-- spam-rate aggregation
-- campaign-risk ranking
-- top sender investigation queue
+Recipient fan-out, sender activity, reports, repeated-text behavior, URL volume, campaign-risk ranking, and top-sender investigation queue.
 
 ### 4. 🧪 Experiments & Counterfactuals
 
 `dashboard/pages/3_Experiments_Counterfactuals.py`
 
-Product-science evaluation of safety interventions:
-
-- control vs warning-UI CTR
-- two-proportion z-test
-- p-value
-- inverse propensity weighting
-- counterfactual CTR estimates
-- average treatment effect
-- spam vs legitimate side-effect segmentation
+Control vs warning-UI CTR, two-proportion z-test, p-value, inverse propensity weighting, counterfactual CTR, ATE, and legitimate-user side-effect segmentation.
 
 ### 5. 🌐 Ecosystem Health & Monitoring
 
 `dashboard/pages/4_Ecosystem_Monitoring.py`
 
-Operational monitoring surface:
-
-- spam prevalence trends
-- enforcement rate
-- recall
-- false-positive trends
-- click-through behavior
-- score shifts
-- latest-window anomaly alerts
+Spam prevalence, enforcement, recall, false positives, click-through trends, score shifts, and latest-window anomaly alerts.
 
 ---
 
 ## Trust & Safety measurement framework
-
-A useful anti-abuse system needs more than accuracy.
 
 | Dimension | Core question | Example metric |
 |---|---|---|
@@ -178,20 +144,12 @@ A useful anti-abuse system needs more than accuracy.
 
 ---
 
-## Experimentation
-
-`ab_test_report()` evaluates a warning-UI intervention with a **two-proportion z-test**.
-
-`ipw_counterfactual()` estimates the treatment effect using **inverse propensity weighting** when intervention assignment is not perfectly randomized.
-
-This makes the repo demonstrate both **online experiment thinking** and **observational causal analysis**.
-
----
-
 ## Repository map
 
 ```text
 MessageShield-RCS-Trust-Safety/
+├── assets/
+│   └── dashboard-preview.svg
 ├── dashboard/
 │   ├── app.py
 │   └── pages/
@@ -208,7 +166,6 @@ MessageShield-RCS-Trust-Safety/
 │   └── run_pipeline.py
 ├── tests/
 │   └── test_pipeline.py
-├── outputs/                 generated locally
 ├── requirements.txt
 └── README.md
 ```
@@ -224,8 +181,6 @@ pip install -r requirements.txt
 python src/run_pipeline.py --rows 30000
 streamlit run dashboard/app.py
 ```
-
-Streamlit automatically exposes the additional dashboard pages in the sidebar.
 
 ---
 
@@ -254,19 +209,7 @@ Streamlit automatically exposes the additional dashboard pages in the sidebar.
 
 ## Production evolution
 
-A real large-scale deployment could extend this project with:
-
-- transformer / embedding-based message representations
-- multilingual abuse models
-- graph community detection for coordinated campaigns
-- sender reputation and business-verification signals
-- streaming feature computation
-- calibration by region / language / sender type
-- human-review feedback loops
-- policy-aware enforcement tiers
-- drift and challenger-model evaluation
-- privacy-preserving feature aggregation
-- real-time alerting and experiment guardrails
+A real large-scale deployment could extend this project with transformer/embedding message representations, multilingual abuse models, graph community detection, sender reputation, streaming feature computation, calibration by region/language/sender type, human-review feedback loops, policy-aware enforcement tiers, challenger-model evaluation, and privacy-preserving aggregation.
 
 ---
 
