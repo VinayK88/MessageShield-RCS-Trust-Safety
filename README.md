@@ -4,15 +4,15 @@
 
 ### RCS / RBM Trust & Safety Data Science Platform
 
-**Spam · Phishing · Abuse Detection · Graph Analytics · A/B Testing · Counterfactual Inference · Ecosystem Monitoring**
+**Spam · Phishing · Abuse Detection · AI Intelligence · Graph Analytics · A/B Testing · Counterfactual Inference · Policy Decisioning · Ecosystem Monitoring**
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Multi--Page%20Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-Detection%20ML-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
-[![NetworkX](https://img.shields.io/badge/NetworkX-Graph%20Signals-2C7FB8?style=flat-square)](https://networkx.org/)
+[![NetworkX](https://img.shields.io/badge/NetworkX-Campaign%20Graph-2C7FB8?style=flat-square)](https://networkx.org/)
 [![Trust & Safety](https://img.shields.io/badge/Trust%20%26%20Safety-RCS%20%2F%20RBM-238636?style=flat-square)](#)
 
-**message → sender behavior → graph context → risk score → enforcement → experiment → monitoring**
+**message → AI label → sender behavior → graph context → risk score → policy action → experiment → monitoring**
 
 </div>
 
@@ -24,15 +24,15 @@
   <img src="assets/dashboard-preview.svg" alt="MessageShield Trust and Safety Command Center dashboard preview" width="100%" />
 </p>
 
-> **Command Center:** executive ecosystem health, model effectiveness, false-positive guardrails, intervention impact, and a high-risk investigation queue in one surface. The repository also includes dedicated views for model performance, abuse networks, experimentation, counterfactual analysis, and ecosystem monitoring.
+> **Command Center:** executive ecosystem health, model effectiveness, false-positive guardrails, intervention impact, and a high-risk investigation queue. The product now also includes dedicated views for **AI abuse intelligence, global abuse intelligence, coordinated campaign detection, and Trust & Safety policy decisioning**.
 
 ---
 
 ## Product concept
 
-MessageShield is a portfolio-grade Trust & Safety data science system for protecting an **RCS/RBM-style messaging ecosystem** from spam, phishing, and unwanted traffic while minimizing harm to legitimate users.
+MessageShield is a portfolio-grade Trust & Safety data science system for protecting an **RCS/RBM-style messaging ecosystem** from spam, phishing, scams, impersonation, and unwanted traffic while minimizing harm to legitimate users.
 
-Rather than treating abuse detection as a pure classification task, the project combines **NLP, sender behavior, graph topology, experimentation, counterfactual inference, and operational monitoring** into one product-oriented workflow.
+Rather than treating abuse detection as a pure classification task, the project combines **NLP, AI-assisted abuse taxonomy, sender behavior, graph topology, experimentation, counterfactual inference, proportional policy actions, and operational monitoring** into one product-oriented workflow.
 
 > **Privacy / provenance:** all data is synthetic. This project is inspired by common large-scale messaging Trust & Safety problems and is not affiliated with, trained on, or derived from Google production systems.
 
@@ -47,44 +47,39 @@ Rather than treating abuse detection as a pure classification task, the project 
 | **Abuse Network** | Sender fan-out, campaign-like behavior, repeated text, reports, URLs, high-risk sender ranking |
 | **Experiments & Counterfactuals** | A/B testing, two-proportion z-test, IPW counterfactual estimate, treatment side effects |
 | **Ecosystem Monitoring** | Trend monitoring, prevalence, enforcement, recall, false positives, click-through, anomaly alerts |
+| **AI Abuse Intelligence** | Explainable labels for phishing/scam/impersonation/malware/spam with confidence and evidence |
+| **Global Abuse Intelligence** | Market-tier and P2P-vs-RBM risk segmentation, emerging abuse vectors, operating tables |
+| **Campaign Graph** | Coordinated-abuse candidates, sender fan-out, graph components, campaign-risk ranking |
+| **Policy Decision Simulator** | Allow / review / rate-limit / warn / quarantine / block decision ladder |
 
 ---
 
 ## System architecture
 
 ```text
-                         ┌────────────────────────────┐
-                         │ Synthetic RCS / RBM events │
-                         └─────────────┬──────────────┘
-                                       │
-                  ┌────────────────────┼────────────────────┐
-                  │                    │                    │
-                  ▼                    ▼                    ▼
-        ┌─────────────────┐  ┌─────────────────┐  ┌──────────────────┐
-        │ Text / NLP      │  │ Behavior        │  │ Graph topology   │
-        │ TF-IDF n-grams  │  │ velocity        │  │ fan-out          │
-        │ spam language   │  │ reports / URLs  │  │ PageRank         │
-        └────────┬────────┘  └────────┬────────┘  └────────┬─────────┘
-                 └────────────────────┼────────────────────┘
-                                      ▼
-                            ┌───────────────────┐
-                            │ Spam classifier   │
-                            │ calibrated score  │
-                            └─────────┬─────────┘
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    ▼                 ▼                 ▼
-          ┌────────────────┐ ┌────────────────┐ ┌──────────────────┐
-          │ Enforcement    │ │ Experimentation│ │ Monitoring       │
-          │ FPR guardrail  │ │ A/B + IPW      │ │ ecosystem health │
-          └────────────────┘ └────────────────┘ └──────────────────┘
+Synthetic RCS / RBM events
+          │
+          ├───────────────┬────────────────┬────────────────┐
+          ▼               ▼                ▼                ▼
+      Text / NLP       Behavior        Graph topology    AI taxonomy
+      TF-IDF           velocity        fan-out           abuse label
+      n-grams           reports         PageRank          confidence
+          └───────────────┴────────────────┴────────────────┘
+                                  │
+                                  ▼
+                           Spam risk model
+                                  │
+                    ┌─────────────┼──────────────┐
+                    ▼             ▼              ▼
+               Policy action  Experimentation  Monitoring
+               allow → block     A/B + IPW     ecosystem health
 ```
 
 ---
 
 ## Detection strategy
 
-The classifier fuses three signal families:
+The classifier fuses three core signal families:
 
 | Signal family | Examples |
 |---|---|
@@ -92,41 +87,47 @@ The classifier fuses three signal families:
 | **Behavioral** | 24h sending velocity, unique recipients, URLs, reports, sender age |
 | **Graph** | sender out-degree, weighted fan-out, PageRank, fan-out ratio |
 
-The operating threshold is chosen to **maximize spam recall while keeping false-positive rate ≤ 2%**. This reflects the real Trust & Safety cost of blocking legitimate conversations.
+The operating threshold is chosen to **maximize spam recall while keeping false-positive rate ≤ 2%**. This reflects the Trust & Safety cost of blocking legitimate conversations.
+
+On top of the classifier, `src/abuse_intelligence.py` adds an explainable abuse taxonomy and `src/enforcement.py` maps risk into a proportional product action.
+
+---
+
+## New intelligence + policy layers
+
+### 🤖 AI Abuse Intelligence
+
+Messages receive an explainable abuse class such as **phishing, scam, impersonation, malware, spam, or benign**, plus a confidence score and short evidence string. The current implementation is deterministic and local so the repository remains reproducible; it is designed as the interface where a production embedding/LLM classifier could be evaluated and substituted.
+
+### 🌍 Global Abuse Intelligence
+
+The dashboard segments synthetic traffic by **market-risk tier** and **P2P vs RBM**, then compares spam prevalence, model score, reports, click behavior, and emerging vectors. This demonstrates how a global communications product could prioritize regional enforcement and measurement.
+
+### 🕸️ Coordinated Campaign Detection
+
+Sender-level aggregation ranks potential campaigns using **recipient fan-out, repeated behavior, reports, URLs, spam prevalence, and model score**. A graph summary exposes connectivity and component structure, with a production path toward shared-URL/domain/business-ID community detection.
+
+### 🎯 Trust & Safety Policy Decisioning
+
+Model risk is translated into a proportional action ladder:
+
+`ALLOW → HUMAN REVIEW → RATE LIMIT → WARN → QUARANTINE → BLOCK`
+
+The simulator makes the distinction between **prediction** and **product policy** explicit—an important part of real Trust & Safety systems.
 
 ---
 
 ## Multi-page dashboards
 
-### 1. 🛡️ Trust & Safety Command Center
-
-`dashboard/app.py`
-
-Executive view for product, policy, and security stakeholders: spam prevalence, precision/recall, false-positive rate, PR-AUC, risk-score distributions, warning-UI impact, investigation queue, and monitoring snapshot.
-
-### 2. 📈 Model Performance
-
-`dashboard/pages/1_Model_Performance.py`
-
-ROC/PR curves, calibrated operating threshold, threshold sensitivity, precision/recall/FPR trade-offs, and the explicit 2% production FPR guardrail.
-
-### 3. 🕸️ Abuse Network & Sender Behavior
-
-`dashboard/pages/2_Abuse_Network.py`
-
-Recipient fan-out, sender activity, reports, repeated-text behavior, URL volume, campaign-risk ranking, and top-sender investigation queue.
-
-### 4. 🧪 Experiments & Counterfactuals
-
-`dashboard/pages/3_Experiments_Counterfactuals.py`
-
-Control vs warning-UI CTR, two-proportion z-test, p-value, inverse propensity weighting, counterfactual CTR, ATE, and legitimate-user side-effect segmentation.
-
-### 5. 🌐 Ecosystem Health & Monitoring
-
-`dashboard/pages/4_Ecosystem_Monitoring.py`
-
-Spam prevalence, enforcement, recall, false positives, click-through trends, score shifts, and latest-window anomaly alerts.
+1. `dashboard/app.py` — 🛡️ **Trust & Safety Command Center**
+2. `dashboard/pages/1_Model_Performance.py` — 📈 **Model Performance**
+3. `dashboard/pages/2_Abuse_Network.py` — 🕸️ **Abuse Network & Sender Behavior**
+4. `dashboard/pages/3_Experiments_Counterfactuals.py` — 🧪 **Experiments & Counterfactuals**
+5. `dashboard/pages/4_Ecosystem_Monitoring.py` — 🌐 **Ecosystem Health & Monitoring**
+6. `dashboard/pages/5_AI_Abuse_Intelligence.py` — 🤖 **AI Abuse Intelligence**
+7. `dashboard/pages/6_Global_Abuse_Intelligence.py` — 🌍 **Global Abuse Intelligence**
+8. `dashboard/pages/7_Campaign_Graph.py` — 🕸️ **Coordinated Campaign Detection**
+9. `dashboard/pages/8_Policy_Decision_Simulator.py` — 🎯 **Policy Decision Simulator**
 
 ---
 
@@ -138,8 +139,11 @@ Spam prevalence, enforcement, recall, false positives, click-through trends, sco
 | **Coverage** | How much abuse do we catch? | recall |
 | **Collateral damage** | How often do we block legitimate traffic? | FPR |
 | **Decision quality** | Are positive decisions reliable? | precision / PR-AUC |
+| **AI quality** | Are abuse labels confident and explainable? | label confidence / taxonomy mix |
+| **Campaign risk** | Is abuse coordinated across senders? | fan-out / graph components / campaign risk |
 | **User impact** | Does an intervention reduce risky behavior? | CTR change |
 | **Causal impact** | What would happen without treatment? | IPW ATE |
+| **Policy mix** | Are interventions proportional to risk? | allow/warn/quarantine/block distribution |
 | **Adversarial change** | Is traffic behavior shifting? | score / metric alerts |
 
 ---
@@ -156,11 +160,17 @@ MessageShield-RCS-Trust-Safety/
 │       ├── 1_Model_Performance.py
 │       ├── 2_Abuse_Network.py
 │       ├── 3_Experiments_Counterfactuals.py
-│       └── 4_Ecosystem_Monitoring.py
+│       ├── 4_Ecosystem_Monitoring.py
+│       ├── 5_AI_Abuse_Intelligence.py
+│       ├── 6_Global_Abuse_Intelligence.py
+│       ├── 7_Campaign_Graph.py
+│       └── 8_Policy_Decision_Simulator.py
 ├── src/
 │   ├── generate_data.py
 │   ├── features.py
 │   ├── model.py
+│   ├── abuse_intelligence.py
+│   ├── enforcement.py
 │   ├── experiments.py
 │   ├── monitoring.py
 │   └── run_pipeline.py
@@ -190,26 +200,28 @@ streamlit run dashboard/app.py
 |---|---|
 | Large-scale abuse analytics | synthetic event pipeline + ecosystem KPIs |
 | Spam / phishing classification | NLP + behavioral + graph classifier |
+| AI tools in data science | explainable abuse intelligence layer + confidence/evidence interface |
 | Adversarial behavior analysis | velocity, repetition, fan-out, reports, URLs |
+| Coordinated-abuse analysis | campaign-risk ranking + graph connectivity |
 | A/B testing | warning-UI experiment + z-test |
 | Counterfactual analysis | inverse propensity weighting |
 | False-positive management | explicit ≤2% FPR threshold guardrail |
-| Product measurement | CTR + ecosystem-health framework |
+| Product policy | proportional intervention ladder |
+| Global ecosystem measurement | market-tier + P2P/RBM segmentation |
 | Automated monitoring | trend dashboards + anomaly heuristics |
-| Cross-functional communication | executive dashboard + investigation surfaces |
-| Python / statistics | end-to-end implementation |
+| Cross-functional communication | executive, analyst, experiment, and policy surfaces |
 
 ---
 
 ## Interview walkthrough
 
-> I built MessageShield as an end-to-end Trust & Safety data science system for an RCS-style messaging ecosystem. I combined NLP, sender behavior, and communication-graph signals to detect spam and phishing, then selected the operating threshold to maximize recall under a strict 2% false-positive guardrail. I evaluated a warning UI using both A/B testing and inverse-propensity-weighted counterfactual analysis, and built multi-page dashboards for executive ecosystem health, model performance, abuse networks, experimentation, and operational monitoring.
+> I built MessageShield as an end-to-end Trust & Safety data science platform for an RCS-style messaging ecosystem. I combined NLP, sender behavior, and communication-graph signals for abuse detection; layered an explainable AI abuse taxonomy on top; ranked coordinated campaign risk; and translated model scores into proportional product actions from allow through block. I also evaluated a warning intervention with A/B testing and counterfactual IPW analysis and built dashboards for global ecosystem health, model performance, abuse intelligence, campaign detection, policy decisioning, and monitoring—all under a strict false-positive guardrail.
 
 ---
 
 ## Production evolution
 
-A real large-scale deployment could extend this project with transformer/embedding message representations, multilingual abuse models, graph community detection, sender reputation, streaming feature computation, calibration by region/language/sender type, human-review feedback loops, policy-aware enforcement tiers, challenger-model evaluation, and privacy-preserving aggregation.
+A real deployment could replace the deterministic AI taxonomy with **multilingual embeddings or a frontier/open-weight classifier**, add shared URL/domain/business identity graph entities, streaming features, regional calibration, human-review feedback, appeal outcomes, policy versioning, challenger models, and privacy-preserving aggregation.
 
 ---
 
@@ -217,6 +229,6 @@ A real large-scale deployment could extend this project with transformer/embeddi
 
 ### Protect ecosystem trust without sacrificing legitimate communication.
 
-**NLP · Graph ML · Behavioral Analytics · Experimentation · Causal Inference · Monitoring**
+**NLP · AI Classification · Graph ML · Behavioral Analytics · Experimentation · Causal Inference · Policy Decisioning · Monitoring**
 
 </div>
