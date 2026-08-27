@@ -1,79 +1,219 @@
-# MessageShield: RCS Trust & Safety Data Science
+<div align="center">
 
-A portfolio-grade Trust & Safety data science project for detecting **spam, phishing, and unwanted messaging traffic** in an RCS/RBM-style ecosystem while explicitly controlling harm to legitimate users.
+# 🛡️ MessageShield
 
-The project combines **message text**, **sender behavior**, and **communication-graph signals**, then evaluates product interventions with **A/B testing** and **counterfactual inference**. It also produces ecosystem-health metrics for spam prevalence, false positives, enforcement efficacy, and user impact.
+### RCS / RBM Trust & Safety Data Science Platform
 
-> This repository uses fully synthetic data. It is inspired by the analytical problems common to large-scale messaging Trust & Safety systems and is not affiliated with or derived from Google production systems.
+**Spam · Phishing · Abuse Detection · Graph Analytics · A/B Testing · Counterfactual Inference · Ecosystem Monitoring**
 
-## Why this project
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-Multi--Page%20Dashboard-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-Detection%20ML-F7931E?style=flat-square&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+[![NetworkX](https://img.shields.io/badge/NetworkX-Graph%20Signals-2C7FB8?style=flat-square)](https://networkx.org/)
+[![Trust & Safety](https://img.shields.io/badge/Trust%20%26%20Safety-RCS%20%2F%20RBM-238636?style=flat-square)](#)
 
-A production anti-abuse system cannot optimize only for model accuracy. Blocking legitimate conversations is costly, adversaries adapt, and product interventions can affect engagement. MessageShield therefore frames the problem around four questions:
+**message → sender behavior → graph context → risk score → enforcement → experiment → monitoring**
 
-1. **Detection:** Can we identify abusive messages using content, behavioral, and graph signals?
-2. **User safety:** How much spam can we catch while holding the false-positive rate below a strict guardrail?
-3. **Product impact:** Does a warning UI reduce risky click-through, and what side effects does it have?
-4. **Ecosystem health:** Are spam prevalence, enforcement efficacy, or model scores shifting over time?
+</div>
+
+---
+
+## Product concept
+
+MessageShield is a portfolio-grade Trust & Safety data science system for protecting an **RCS/RBM-style messaging ecosystem** from spam, phishing, and unwanted traffic while minimizing harm to legitimate users.
+
+Rather than treating abuse detection as a pure classification task, the project combines **NLP, sender behavior, graph topology, experimentation, counterfactual inference, and operational monitoring** into one product-oriented workflow.
+
+> **Privacy / provenance:** all data is synthetic. This project is inspired by common large-scale messaging Trust & Safety problems and is not affiliated with, trained on, or derived from Google production systems.
+
+---
+
+## What a reviewer can see in 60 seconds
+
+| Surface | What it demonstrates |
+|---|---|
+| **Trust & Safety Command Center** | Executive ecosystem KPIs, spam score distribution, intervention impact, high-risk investigation queue |
+| **Model Performance** | ROC-AUC, PR-AUC, threshold sensitivity, false-positive guardrail, precision-recall trade-offs |
+| **Abuse Network** | Sender fan-out, campaign-like behavior, repeated text, reports, URLs, high-risk sender ranking |
+| **Experiments & Counterfactuals** | A/B testing, two-proportion z-test, IPW counterfactual estimate, treatment side effects |
+| **Ecosystem Monitoring** | Trend monitoring, prevalence, enforcement, recall, false positives, click-through, anomaly alerts |
+
+---
 
 ## System architecture
 
 ```text
-Synthetic RCS/RBM events
-        |
-        v
-+----------------------+      +----------------------+
-| Text signals         |      | Behavioral signals   |
-| TF-IDF n-grams       |      | velocity / reports   |
-+----------+-----------+      +-----------+----------+
-           \                          /
-            \                        /
-             v                      v
-             +----------------------+
-             | Communication graph  |
-             | fan-out / PageRank   |
-             +----------+-----------+
-                        |
-                        v
-             +----------------------+
-             | Spam classifier      |
-             | calibrated threshold |
-             +----------+-----------+
-                        |
-          +-------------+-------------+
-          |                           |
-          v                           v
-+-------------------+        +------------------------+
-| Ecosystem metrics |        | Product measurement    |
-| FPR / recall /    |        | A/B test + IPW ATE     |
-| prevalence / CTR  |        | warning UI             |
-+-------------------+        +------------------------+
+                         ┌────────────────────────────┐
+                         │ Synthetic RCS / RBM events │
+                         └─────────────┬──────────────┘
+                                       │
+                  ┌────────────────────┼────────────────────┐
+                  │                    │                    │
+                  ▼                    ▼                    ▼
+        ┌─────────────────┐  ┌─────────────────┐  ┌──────────────────┐
+        │ Text / NLP      │  │ Behavior        │  │ Graph topology   │
+        │ TF-IDF n-grams  │  │ velocity        │  │ fan-out          │
+        │ spam language   │  │ reports / URLs  │  │ PageRank         │
+        └────────┬────────┘  └────────┬────────┘  └────────┬─────────┘
+                 └────────────────────┼────────────────────┘
+                                      ▼
+                            ┌───────────────────┐
+                            │ Spam classifier   │
+                            │ calibrated score  │
+                            └─────────┬─────────┘
+                                      │
+                    ┌─────────────────┼─────────────────┐
+                    ▼                 ▼                 ▼
+          ┌────────────────┐ ┌────────────────┐ ┌──────────────────┐
+          │ Enforcement    │ │ Experimentation│ │ Monitoring       │
+          │ FPR guardrail  │ │ A/B + IPW      │ │ ecosystem health │
+          └────────────────┘ └────────────────┘ └──────────────────┘
 ```
 
-## What it demonstrates
+---
 
-- Python-based end-to-end analytics pipeline
-- Statistical classification for spam/phishing detection
-- NLP using TF-IDF word and bi-gram features
-- Behavioral abuse features such as sending velocity and recipient fan-out
-- Graph-derived sender features using NetworkX
-- Imbalanced classification with PR-AUC and operational threshold selection
-- False-positive guardrails to protect legitimate users
-- Randomized-style A/B test analysis with a two-proportion z-test
-- Counterfactual treatment-effect estimation using inverse propensity weighting
-- Ecosystem-health monitoring and anomaly alerts
-- Reproducible synthetic-data generation
+## Detection strategy
 
-## Modeling approach
+The classifier fuses three signal families:
 
-The classifier combines **text**, **behavioral**, and **graph** signals. The operational threshold is selected for the **highest spam recall while keeping false-positive rate ≤ 2%**, reflecting the cost of blocking legitimate communication.
+| Signal family | Examples |
+|---|---|
+| **Text** | TF-IDF word/bi-gram patterns, spam language, repeated phrasing |
+| **Behavioral** | 24h sending velocity, unique recipients, URLs, reports, sender age |
+| **Graph** | sender out-degree, weighted fan-out, PageRank, fan-out ratio |
+
+The operating threshold is chosen to **maximize spam recall while keeping false-positive rate ≤ 2%**. This reflects the real Trust & Safety cost of blocking legitimate conversations.
+
+---
+
+## Multi-page dashboards
+
+### 1. 🛡️ Trust & Safety Command Center
+
+`dashboard/app.py`
+
+Executive view for product, policy, and security stakeholders:
+
+- spam prevalence
+- precision / recall
+- false-positive rate
+- PR-AUC
+- risk-score distributions
+- warning-UI impact
+- high-risk investigation queue
+- latest monitoring snapshot
+
+### 2. 📈 Model Performance
+
+`dashboard/pages/1_Model_Performance.py`
+
+Model-development and operating-point view:
+
+- ROC curve
+- Precision-Recall curve
+- ROC-AUC / PR-AUC
+- calibrated operating threshold
+- threshold sensitivity
+- precision / recall / FPR trade-offs
+- explicit 2% FPR production guardrail
+
+### 3. 🕸️ Abuse Network & Sender Behavior
+
+`dashboard/pages/2_Abuse_Network.py`
+
+Campaign and adversarial-behavior analysis:
+
+- recipient fan-out
+- sender activity volume
+- prior abuse reports
+- repeated-text behavior
+- URL volume
+- spam-rate aggregation
+- campaign-risk ranking
+- top sender investigation queue
+
+### 4. 🧪 Experiments & Counterfactuals
+
+`dashboard/pages/3_Experiments_Counterfactuals.py`
+
+Product-science evaluation of safety interventions:
+
+- control vs warning-UI CTR
+- two-proportion z-test
+- p-value
+- inverse propensity weighting
+- counterfactual CTR estimates
+- average treatment effect
+- spam vs legitimate side-effect segmentation
+
+### 5. 🌐 Ecosystem Health & Monitoring
+
+`dashboard/pages/4_Ecosystem_Monitoring.py`
+
+Operational monitoring surface:
+
+- spam prevalence trends
+- enforcement rate
+- recall
+- false-positive trends
+- click-through behavior
+- score shifts
+- latest-window anomaly alerts
+
+---
+
+## Trust & Safety measurement framework
+
+A useful anti-abuse system needs more than accuracy.
+
+| Dimension | Core question | Example metric |
+|---|---|---|
+| **Prevalence** | How much abuse reaches the ecosystem? | spam prevalence |
+| **Coverage** | How much abuse do we catch? | recall |
+| **Collateral damage** | How often do we block legitimate traffic? | FPR |
+| **Decision quality** | Are positive decisions reliable? | precision / PR-AUC |
+| **User impact** | Does an intervention reduce risky behavior? | CTR change |
+| **Causal impact** | What would happen without treatment? | IPW ATE |
+| **Adversarial change** | Is traffic behavior shifting? | score / metric alerts |
+
+---
 
 ## Experimentation
 
-`ab_test_report()` compares warning-UI click-through rates using a two-proportion z-test. `ipw_counterfactual()` estimates the average treatment effect using inverse propensity weighting when exposure is not perfectly randomized.
+`ab_test_report()` evaluates a warning-UI intervention with a **two-proportion z-test**.
 
-## Core Trust & Safety metrics
+`ipw_counterfactual()` estimates the treatment effect using **inverse propensity weighting** when intervention assignment is not perfectly randomized.
 
-The monitoring layer reports spam prevalence, enforcement rate, false-positive rate, spam recall, user click rate, and model-score shift alerts.
+This makes the repo demonstrate both **online experiment thinking** and **observational causal analysis**.
+
+---
+
+## Repository map
+
+```text
+MessageShield-RCS-Trust-Safety/
+├── dashboard/
+│   ├── app.py
+│   └── pages/
+│       ├── 1_Model_Performance.py
+│       ├── 2_Abuse_Network.py
+│       ├── 3_Experiments_Counterfactuals.py
+│       └── 4_Ecosystem_Monitoring.py
+├── src/
+│   ├── generate_data.py
+│   ├── features.py
+│   ├── model.py
+│   ├── experiments.py
+│   ├── monitoring.py
+│   └── run_pipeline.py
+├── tests/
+│   └── test_pipeline.py
+├── outputs/                 generated locally
+├── requirements.txt
+└── README.md
+```
+
+---
 
 ## Run locally
 
@@ -82,25 +222,58 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 python src/run_pipeline.py --rows 30000
+streamlit run dashboard/app.py
 ```
 
-## Example interview walkthrough
+Streamlit automatically exposes the additional dashboard pages in the sidebar.
 
-> I built an end-to-end Trust & Safety data science system for an RCS-style messaging ecosystem. I combined NLP features with sender behavior and communication-graph signals, trained a spam classifier, and selected the operating threshold to maximize abuse recall under a 2% false-positive guardrail. I also evaluated a warning UI with both an A/B test and inverse-propensity-weighted counterfactual analysis, then built monitoring for spam prevalence, enforcement rate, false positives, recall, user click-through, and score shifts.
+---
 
-## How this maps to a messaging Trust & Safety DS role
+## Why this project is relevant to messaging Trust & Safety
 
 | Role capability | Repository evidence |
 |---|---|
-| Large-scale abuse analytics | Synthetic event pipeline and ecosystem metrics |
-| Spam/phishing classification | NLP + behavioral + graph classifier |
-| Adversarial behavior analysis | velocity, repetition, fan-out and graph features |
-| A/B testing | two-proportion test for safety-warning intervention |
+| Large-scale abuse analytics | synthetic event pipeline + ecosystem KPIs |
+| Spam / phishing classification | NLP + behavioral + graph classifier |
+| Adversarial behavior analysis | velocity, repetition, fan-out, reports, URLs |
+| A/B testing | warning-UI experiment + z-test |
 | Counterfactual analysis | inverse propensity weighting |
-| False-positive management | explicit 2% FPR threshold guardrail |
-| Product measurement | CTR and ecosystem-health metrics |
+| False-positive management | explicit ≤2% FPR threshold guardrail |
+| Product measurement | CTR + ecosystem-health framework |
+| Automated monitoring | trend dashboards + anomaly heuristics |
+| Cross-functional communication | executive dashboard + investigation surfaces |
 | Python / statistics | end-to-end implementation |
 
-## License
+---
 
-MIT — intended for educational and portfolio use.
+## Interview walkthrough
+
+> I built MessageShield as an end-to-end Trust & Safety data science system for an RCS-style messaging ecosystem. I combined NLP, sender behavior, and communication-graph signals to detect spam and phishing, then selected the operating threshold to maximize recall under a strict 2% false-positive guardrail. I evaluated a warning UI using both A/B testing and inverse-propensity-weighted counterfactual analysis, and built multi-page dashboards for executive ecosystem health, model performance, abuse networks, experimentation, and operational monitoring.
+
+---
+
+## Production evolution
+
+A real large-scale deployment could extend this project with:
+
+- transformer / embedding-based message representations
+- multilingual abuse models
+- graph community detection for coordinated campaigns
+- sender reputation and business-verification signals
+- streaming feature computation
+- calibration by region / language / sender type
+- human-review feedback loops
+- policy-aware enforcement tiers
+- drift and challenger-model evaluation
+- privacy-preserving feature aggregation
+- real-time alerting and experiment guardrails
+
+---
+
+<div align="center">
+
+### Protect ecosystem trust without sacrificing legitimate communication.
+
+**NLP · Graph ML · Behavioral Analytics · Experimentation · Causal Inference · Monitoring**
+
+</div>
