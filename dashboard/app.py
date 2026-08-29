@@ -14,12 +14,12 @@ st.markdown(
     """
     <style>
     html, body, [class*="css"] {
-        font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
         color: #1d1d1f;
     }
     .stApp { background: #ffffff; }
-    .block-container { max-width: 1400px; padding-top: 2.4rem; padding-bottom: 4rem; }
-    h1, h2, h3 { letter-spacing: -0.025em; font-family: "Avenir Next", Avenir, "Helvetica Neue", Helvetica, Arial, sans-serif; }
+    .block-container { max-width: 1450px; padding-top: 2.4rem; padding-bottom: 4rem; }
+    h1, h2, h3 { letter-spacing: -0.035em; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif; }
     p, label, .stCaption { color: #6e6e73 !important; }
     [data-testid="stSidebar"] { background: rgba(245,245,247,.97); border-right: 1px solid #e8e8ed; }
     [data-testid="stMetric"] {
@@ -31,12 +31,12 @@ st.markdown(
         min-height: 118px;
     }
     [data-testid="stMetricLabel"] { font-size: .75rem; color: #6e6e73; font-weight: 600; letter-spacing: .01em; }
-    [data-testid="stMetricValue"] { font-size: 1.95rem; color: #1d1d1f; letter-spacing: -.035em; font-weight: 650; }
+    [data-testid="stMetricValue"] { font-size: 1.9rem; color: #1d1d1f; letter-spacing: -.04em; font-weight: 650; }
     [data-testid="stMetricDelta"] { font-size: .72rem; }
     [data-testid="stDataFrame"] { border: 1px solid #ececf0; border-radius: 20px; overflow: hidden; }
     .apple-eyebrow { color:#0071e3; font-size:.76rem; font-weight:700; letter-spacing:.10em; text-transform:uppercase; margin-bottom:.6rem; }
-    .apple-hero { font-size:3.45rem; line-height:1.02; font-weight:650; letter-spacing:-.052em; color:#1d1d1f; margin:0; }
-    .apple-subtitle { font-size:1.14rem; line-height:1.55; max-width:900px; color:#6e6e73; margin-top:.9rem; }
+    .apple-hero { font-size:3.65rem; line-height:1.02; font-weight:650; letter-spacing:-.058em; color:#1d1d1f; margin:0; }
+    .apple-subtitle { font-size:1.14rem; line-height:1.55; max-width:920px; color:#6e6e73; margin-top:.9rem; }
     .apple-chip { display:inline-block; background:#f5f5f7; color:#424245; border-radius:999px; padding:.42rem .78rem; font-size:.74rem; margin:.3rem .32rem .1rem 0; border:1px solid #ececf0; }
     .apple-section-title { font-size:1.5rem; font-weight:650; letter-spacing:-.03em; color:#1d1d1f; margin-bottom:.18rem; }
     .apple-section-sub { color:#86868b; font-size:.9rem; margin-bottom:1rem; }
@@ -70,26 +70,32 @@ ab = summary["ab_test"]
 threshold = ev["threshold"]
 flagged = scored["spam_score"] >= threshold
 enforcement_rate = float(flagged.mean())
-high_risk_rate = float((scored["spam_score"] >= 0.90).mean())
+high_risk_mask = scored["spam_score"] >= 0.90
+high_risk_rate = float(high_risk_mask.mean())
 avg_reports = float(scored["prior_reports"].mean())
 avg_reach = float(scored["unique_recipients_24h"].mean())
 warning_effect = float(ab["absolute_lift"])
+total_messages = len(scored)
+flagged_count = int(flagged.sum())
+high_risk_count = int(high_risk_mask.sum())
+reported_rate = float((scored["prior_reports"] > 0).mean())
+url_rate = float((scored["url_count"] > 0).mean())
+senders = int(scored["sender_id"].nunique())
+receivers = int(scored["receiver_id"].nunique())
+mean_score = float(scored["spam_score"].mean())
+p95_velocity = float(scored["messages_24h"].quantile(.95))
+p95_reach = float(scored["unique_recipients_24h"].quantile(.95))
 
 st.markdown('<div class="kpi-band"></div>', unsafe_allow_html=True)
-row1 = st.columns(5)
-row1[0].metric("Abuse prevalence", f"{ev['spam_prevalence']:.1%}")
-row1[1].metric("Detection recall", f"{ev['recall']:.1%}")
-row1[2].metric("Precision", f"{ev['precision']:.1%}")
-row1[3].metric("False-positive rate", f"{ev['false_positive_rate']:.2%}", delta="within 2% guardrail", delta_color="normal")
-row1[4].metric("PR-AUC", f"{ev['pr_auc']:.3f}")
-
-st.write("")
-row2 = st.columns(5)
-row2[0].metric("Enforcement rate", f"{enforcement_rate:.1%}")
-row2[1].metric("High-risk traffic", f"{high_risk_rate:.1%}", help="Messages with model score ≥ 0.90")
-row2[2].metric("Avg. reports / msg", f"{avg_reports:.2f}")
-row2[3].metric("Avg. recipient reach", f"{avg_reach:.1f}")
-row2[4].metric("Warning UI effect", f"{warning_effect:+.2%}", delta="risky CTR", delta_color="inverse")
+kpi_rows = [
+    [("Abuse prevalence",f"{ev['spam_prevalence']:.1%}"),("Detection recall",f"{ev['recall']:.1%}"),("Precision",f"{ev['precision']:.1%}"),("False-positive rate",f"{ev['false_positive_rate']:.2%}"),("PR-AUC",f"{ev['pr_auc']:.3f}")],
+    [("Messages",f"{total_messages:,}"),("Flagged",f"{flagged_count:,}"),("High-risk",f"{high_risk_count:,}"),("Enforcement rate",f"{enforcement_rate:.1%}"),("High-risk traffic",f"{high_risk_rate:.1%}")],
+    [("Senders",f"{senders:,}"),("Receivers",f"{receivers:,}"),("Reported traffic",f"{reported_rate:.1%}"),("URL-bearing",f"{url_rate:.1%}"),("Mean risk score",f"{mean_score:.3f}")],
+    [("Avg reports / msg",f"{avg_reports:.2f}"),("Avg recipient reach",f"{avg_reach:.1f}"),("P95 velocity",f"{p95_velocity:.0f}"),("P95 reach",f"{p95_reach:.0f}"),("Warning UI effect",f"{warning_effect:+.2%}")],
+]
+for row in kpi_rows:
+    cols=st.columns(5)
+    for col,(label,value) in zip(cols,row): col.metric(label,value)
 
 st.write("")
 st.divider()
